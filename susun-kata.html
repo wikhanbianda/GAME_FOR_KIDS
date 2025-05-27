@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Permainan Susun Kata</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    background: linear-gradient(135deg, #fceabb, #f8b500);
+    font-family: 'Fredoka One', cursive, Arial, sans-serif;
+    color: #2c3e50;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 10px;
+    user-select: none;
+    position: relative;
+  }
+  header h1 {
+    font-size: 2.2rem;
+    color: #e67e22;
+    text-shadow: 2px 2px 4px #d35400;
+    margin: 0;
+  }
+  #keluar-game {
+    position: absolute;
+    top: 670px;
+    right: 1px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #d35400;
+    cursor: pointer;
+    user-select: none;
+  }
+  #game-container {
+    flex: 1;
+    background: #fff8e1;
+    border-radius: 20px;
+    padding: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  #kata-acak {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #d35400;
+    margin-bottom: 10px;
+    user-select: none;
+  }
+  #huruf-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 10px;
+  }
+  button.huruf-btn {
+    background: #ffb74d;
+    border: none;
+    border-radius: 15px;
+    font-size: 1.1rem;
+    color: #4e342e;
+    padding: 12px 0;
+    cursor: pointer;
+    box-shadow: 0 4px #d17e00;
+    user-select: none;
+    transition: background 0.3s ease;
+  }
+  button.huruf-btn:hover,
+  button.huruf-btn:focus {
+    background: #ffa726;
+    outline: none;
+  }
+  #jawaban-container {
+    margin-top: 20px;
+  }
+  #jawaban-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px #d17e00;
+  }
+  #submit-btn {
+    background-color: #f39c12;
+    border: none;
+    border-radius: 20px;
+    padding: 15px 0;
+    width: 100%;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+    box-shadow: 0 5px #d35400;
+    cursor: pointer;
+    margin-top: 15px;
+    user-select: none;
+    transition: background-color 0.3s ease;
+  }
+  #submit-btn:hover,
+  #submit-btn:focus {
+    background-color: #d35400;
+    outline: none;
+  }
+  #hasil {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #d35400;
+    margin-top: 10px;
+    user-select: none;
+  }
+  #skor {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #d35400;
+    margin-top: 10px;
+    user-select: none;
+  }
+  #kesalahan {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #d35400;
+    margin-top: 10px;
+    user-select: none;
+  }
+  #waktu {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #d35400;
+    margin-top: 10px;
+    user-select: none;
+  }
+  #menu-akhir {
+    display: none;
+    margin-top: 20px;
+  }
+  #menu-akhir button {
+    background-color: #f39c12;
+    border: none;
+    border-radius: 20px;
+    padding: 15px 0;
+    width: 100%;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+    box-shadow: 0 5px #d35400;
+    cursor: pointer;
+    margin-top: 15px;
+    user-select: none;
+    transition: background-color 0.3s ease;
+  }
+  #menu-akhir button:hover,
+  #menu-akhir button:focus {
+    background-color: #d35400;
+    outline: none;
+  }
+  footer {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #6d4c41;
+    margin-top: 5px;
+    user-select: none;
+  }
+  @media (max-height: 600px) {
+    #huruf-container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Permainan Susun Kata</h1>
+  <p>Susun huruf-huruf berikut untuk membentuk kata yang benar!</p>
+  <span id="keluar-game" onclick="window.location.href='index.html'">Keluar Game</span>
+</header>
+
+<div id="game-container" role="main" aria-label="Permainan susun kata">
+  <div id="kata-acak" aria-live="polite"></div>
+  <div id="huruf-container" role="list" aria-live="polite" aria-atomic="true"></div>
+  <div id="jawaban-container">
+    <input id="jawaban-input" type="text" placeholder="Masukkan jawaban Anda" aria-label="Masukkan jawaban Anda">
+    <button id="submit-btn" aria-label="Kirim jawaban">Kirim Jawaban</button>
+  </div>
+  <div id="hasil" aria-live="polite"></div>
+  <div id="skor" aria-live="polite">Skor: 0</div>
+  <div id="kesalahan" aria-live="polite">Kesalahan: 0</div>
+  <div id="waktu" aria-live="polite">Waktu: 10 detik</div>
+  <div id="menu-akhir">
+    <button id="main-lagi-btn" aria-label="Main lagi">Main Lagi</button>
+    <button id="kembali-btn" aria-label="Kembali ke menu awal">Kembali ke Menu Awal</button>
+  </div>
+</div>
+<footer>
+  &copy; 2024 Permainan Susun Kata
+</footer>
+
+<script>
+  (function(){
+    const kataAcak = document.getElementById('kata-acak');
+    const hurufContainer = document.getElementById('huruf-container');
+    const jawabanInput = document.getElementById('jawaban-input');
+    const submitBtn = document.getElementById('submit-btn');
+    const hasil = document.getElementById('hasil');
+    const skor = document.getElementById('skor');
+    const kesalahan = document.getElementById('kesalahan');
+    const waktu = document.getElementById('waktu');
+    const menuAkhir = document.getElementById('menu-akhir');
+    const mainLagiBtn = document.getElementById('main-lagi-btn');
+    const kembaliBtn = document.getElementById('kembali-btn');
+
+    const soal = [
+      { kata: 'Kucing', jawaban: 'Kucing' },
+      { kata: 'Anjing', jawaban: 'Anjing' },
+      { kata: 'Burung', jawaban: 'Burung' },
+      { kata: 'Ikan', jawaban: 'Ikan' },
+      { kata: 'Kelinci', jawaban: 'Kelinci' },
+      { kata: 'Singa', jawaban: 'Singa' },
+      { kata: 'Gajah', jawaban: 'Gajah' },
+      { kata: 'Harimau', jawaban: 'Harimau' },
+      { kata: 'Beruang', jawaban: 'Beruang' },
+      { kata: 'Mobil', jawaban: 'Mobil' },
+      { kata: 'Motor', jawaban: 'Motor' },
+      { kata: 'Bus', jawaban: 'Bus' },
+      { kata: 'Truk', jawaban: 'Truk' },
+      { kata: 'Pisang', jawaban: 'Pisang' },
+      { kata: 'Apel', jawaban: 'Apel' },
+      { kata: 'Jeruk', jawaban: 'Jeruk' },
+      { kata: 'Mangga', jawaban: 'Mangga' },
+      { kata: 'Anggur', jawaban: 'Anggur' },
+      { kata: 'Kuda', jawaban: 'Kuda' },
+      { kata: 'Badak', jawaban: 'Badak' },
+      { kata: 'Macan', jawaban: 'Macan' },
+    ];
+
+    let currentSoal = 0;
+    let skorAkhir = 0;
+    let kesalahanAkhir = 0;
+    let waktuAkhir = 10;
+
+    function loadSoal() {
+      const soalData = soal[currentSoal];
+      const kata = soalData.kata;
+      const jawaban = soalData.jawaban;
+      const huruf = kata.split('');
+      const acakHuruf = shuffleArray(huruf);
+
+      kataAcak.textContent = 'Susun huruf-huruf berikut: ' + acakHuruf.join(', ');
+
+      hurufContainer.innerHTML = '';
+      acakHuruf.forEach(huruf => {
+        const btn = document.createElement('button');
+        btn.className = 'huruf-btn';
+        btn.textContent = huruf;
+        btn.setAttribute('role', 'listitem');
+        btn.setAttribute('aria-label', `Huruf ${huruf}`);
+
+        btn.addEventListener('click', () => {
+          jawabanInput.value += huruf;
+        });
+
+        hurufContainer.appendChild(btn);
+      });
+
+      waktuAkhir = 10;
+      waktu.textContent = `Waktu: ${waktuAkhir} detik`;
+      const interval = setInterval(() => {
+        waktuAkhir--;
+        waktu.textContent = `Waktu: ${waktuAkhir} detik`;
+        if (waktuAkhir <= 0) {
+          clearInterval(interval);
+          submitBtn.click();
+        }
+      }, 1000);
+    }
+
+    submitBtn.addEventListener('click', () => {
+      const jawaban = jawabanInput.value;
+      const soalData = soal[currentSoal];
+      const benar = soalData.jawaban;
+      if (jawaban === benar) {
+        hasil.textContent = 'Jawaban Anda benar!';
+        hasil.style.color = '#66bb6a';
+        skorAkhir += 10;
+        skor.textContent = `Skor: ${skorAkhir}`;
+      } else {
+        hasil.textContent = 'Jawaban Anda salah. Coba lagi!';
+        hasil.style.color = '#ef5350';
+        kesalahanAkhir++;
+        kesalahan.textContent = `Kesalahan: ${kesalahanAkhir}`;
+        if (kesalahanAkhir >= 3) {
+          hasil.textContent = 'Permainan selesai!';
+          hasil.style.color = '#d35400';
+          submitBtn.disabled = true;
+          menuAkhir.style.display = 'block';
+        }
+      }
+      jawabanInput.value = '';
+      currentSoal++;
+      if (currentSoal >= soal.length) {
+        currentSoal = 0;
+      }
+      loadSoal();
+    });
+
+    mainLagiBtn.addEventListener('click', () => {
+      currentSoal = 0;
+      skorAkhir = 0;
+      kesalahanAkhir = 0;
+      skor.textContent = `Skor: ${skorAkhir}`;
+      kesalahan.textContent = `Kesalahan: ${kesalahanAkhir}`;
+      submitBtn.disabled = false;
+      menuAkhir.style.display = 'none';
+      loadSoal();
+    });
+
+    kembaliBtn.addEventListener('click', () => {
+      location.href = 'menu-tebak.html';
+    });
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    loadSoal();
+  })();
+</script>
+
+</body>
+</html>

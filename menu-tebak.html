@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Menu Tebak Game Anak</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: linear-gradient(135deg, #ffd194, #f6b93b);
+    font-family: 'Fredoka One', cursive, Arial, sans-serif;
+    color: #4e342e;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    max-width: 350px;
+    padding: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    user-select: none;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+
+  header h1 {
+    font-size: 3rem;
+    color: #e67e22;
+    text-shadow: 2px 2px 3px #d35400;
+    margin: 0;
+  }
+
+  header p {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-top: 8px;
+    color: #6e4d34;
+  }
+
+  .menu-buttons {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 18px;
+  }
+
+  button.menu-btn {
+    background: #f39c12;
+    border: none;
+    border-radius: 25px;
+    padding: 20px 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+    box-shadow: 0 7px #d35400;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  button.menu-btn:focus,
+  button.menu-btn:hover {
+    background-color: #d35400;
+    outline: none;
+  }
+
+  footer {
+    margin-top: auto;
+    font-size: 0.9rem;
+    text-align: center;
+    color: #6e4d34;
+  }
+
+  /* Responsive for small height */
+  @media (max-height: 600px) {
+    header h1 {
+      font-size: 2.5rem;
+    }
+
+    .menu-buttons {
+      gap: 14px;
+    }
+
+    button.menu-btn {
+      padding: 16px 0;
+      font-size: 1.3rem;
+    }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Tebak Game Anak</h1>
+  <p>Pilih permainan untuk mulai</p>
+</header>
+
+<div class="menu-buttons" role="menu" aria-label="Menu Pilihan Game">
+  <button class="menu-btn" id="start-gambar" role="menuitem" aria-haspopup="true" aria-controls="game-gambar">Tebak Gambar</button>
+  <button class="menu-btn" id="start-warna" role="menuitem" aria-haspopup="true" aria-controls="game-warna">Tebak Warna</button>
+  <button class="menu-btn" id="start-susun" role="menuitem" aria-haspopup="true" aria-controls="game-warna">Susun Kata</button>
+</div>
+
+<footer>
+  &copy; 2024 Tebak Game Anak
+</footer>
+
+<script>
+  // For demonstration: navigate to placeholder URLs or alert
+  document.getElementById('start-gambar').addEventListener('click', () => {
+    alert('Mulai game Tebak Gambar!');
+    location.href = 'tebak-gambar-gameover-wrong.html';
+    // In actual app you can redirect like: location.href = 'tebak-gambar.html';
+  });
+
+  document.getElementById('start-warna').addEventListener('click', () => {
+    alert('Mulai game Tebak Warna!');
+    location.href = 'tebak-warna-gameover.html';
+  });
+
+    document.getElementById('start-susun').addEventListener('click', () => {
+    alert('Mulai game Susun Kata!');
+    location.href = 'susun-kata.html';
+  });
+</script>
+</body>
+</html>
+

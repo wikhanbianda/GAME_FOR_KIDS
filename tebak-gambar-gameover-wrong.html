@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Tebak Gambar - Game Anak Anak (3 Kesempatan Salah Lanjut Soal Acak)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    background: linear-gradient(135deg, #fceabb, #f8b500);
+    font-family: 'Fredoka One', cursive, Arial, sans-serif;
+    color: #2c3e50;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 10px;
+    user-select: none;
+  }
+  header h1 {
+    font-size: 2.2rem;
+    color: #e67e22;
+    text-shadow: 2px 2px 4px #d35400;
+    margin: 0;
+  }
+  #game-container {
+    flex: 1;
+    background: #fff8e1;
+    border-radius: 20px;
+    padding: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    
+  }
+  #image-container {
+    flex-grow: 1;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 0 10px #ffa726;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+  }
+  #image-container img {
+    max-width: 100%;
+    max-height: 250px;
+    object-fit: contain;
+    border-radius: 10px;
+  }
+  #options-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 10px;
+  }
+  button.option-btn {
+    background: #ffb74d;
+    border: none;
+    border-radius: 15px;
+    font-size: 1.1rem;
+    color: #4e342e;
+    padding: 12px 0;
+    cursor: pointer;
+    box-shadow: 0 4px #d17e00;
+    user-select: none;
+    transition: background 0.3s ease;
+  }
+  button.option-btn:hover,
+  button.option-btn:focus {
+    background: #ffa726;
+    outline: none;
+  }
+  button.option-btn.correct {
+    background-color: #66bb6a;
+    box-shadow: 0 4px #388e3c;
+    color: #fff;
+    pointer-events: none;
+  }
+  button.option-btn.wrong {
+    background-color: #ef5350;
+    box-shadow: 0 4px #c62828;
+    color: #fff;
+    pointer-events: none;
+  }
+  #scoreboard {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #e65100;
+    margin-top: 10px;
+    user-select: none;
+  }
+  #question-number {
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #6e2c00;
+    margin-bottom: 6px;
+    user-select: none;
+  }
+  #wrong-chances {
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #d35400;
+    margin-bottom: 6px;
+    user-select: none;
+  }
+  #game-over {
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #d35400;
+    user-select: none;
+    padding: 15px;
+  }
+  #restart-btn, #menu-btn {
+    background-color: #f39c12;
+    border: none;
+    border-radius: 20px;
+    padding: 15px 0;
+    width: 48%;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+    box-shadow: 0 5px #d35400;
+    cursor: pointer;
+    margin-top: 15px;
+    user-select: none;
+    transition: background-color 0.3s ease;
+  }
+  #restart-btn:hover, #restart-btn:focus,
+  #menu-btn:hover, #menu-btn:focus {
+    background-color: #d35400;
+    outline: none;
+  }
+  #game-over-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  footer {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #6d4c41;
+    margin-top: 5px;
+    user-select: none;
+  }
+  @media (max-height: 600px) {
+    #image-container img {
+      max-height: 180px;
+    }
+    #restart-btn, #menu-btn {
+      width: 100%;
+      margin: 8px 0 0 0;
+    }
+    #game-over-buttons {
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Tebak Gambar</h1>
+  <p>Mainkan dan tebak gambar dengan tepat!</p>
+</header>
+
+<div id="game-container" role="main" aria-label="Tebak gambar game">
+  <div id="question-number" aria-live="polite"></div>
+  <div id="wrong-chances" aria-live="polite"></div>
+  <div id="image-container" aria-live="polite" aria-atomic="true">
+    <img src="" alt="" />
+  </div>
+  <div id="options-container" role="list" aria-live="polite" aria-atomic="true"></div>
+  <div id="scoreboard" aria-live="polite">
+    Skor: 0
+  </div>
+  <div id="game-over" style="display:none;">
+    Permainan selesai!<br />
+    Skor akhir kamu adalah: <span id="final-score"></span>
+    <div id="game-over-buttons">
+      <button id="restart-btn" aria-label="Mulai ulang permainan">Main lagi</button>
+      <button id="menu-btn" aria-label="Kembali ke menu awal">Menu Awal</button>
+    </div>
+  </div>
+</div>
+<footer>
+  &copy; 2024 Tebak Gambar Anak
+</footer>
+
+<script>
+  (function(){
+    const originalQuestions = [
+       { image: 'https://img.icons8.com/?size=200&id=120341&format=png&color=000000',alt: 'Gambar seekor kucing lucu', options: ['Kucing', 'Anjing', 'Burung', 'Ikan'], correct: 'Kucing' },
+    { image: 'https://img.icons8.com/?size=200&id=101712&format=png&color=000000', alt: 'Gambar seekor anjing lucu', options: ['Kelinci', 'Burung', 'Anjing', 'Kucing'], correct: 'Anjing' },
+    { image: 'https://img.icons8.com/?size=200&id=Hl4KgHejp69B&format=png&color=000000', alt: 'Gambar seekor burung kecil', options: ['Burung', 'Kuda', 'Kucing', 'Ikan'], correct: 'Burung' },
+    { image: 'https://img.icons8.com/?size=200&id=101716&format=png&color=000000', alt: 'Gambar seekor ikan berwarna', options: ['Ikan', 'Anjing', 'Burung', 'Kelinci'], correct: 'Ikan' },
+    { image: 'https://img.icons8.com/?size=200&id=101720&format=png&color=000000', alt: 'Gambar seekor kelinci putih', options: ['Kuda', 'Kelinci', 'Kucing', 'Ikan'], correct: 'kuda' },
+    { image: 'https://img.icons8.com/?size=200&id=120346&format=png&color=000000', alt: 'Gambar kepala singa', options: ['Singa', 'Harimau', 'Beruang', 'Kucing'], correct: 'Singa' },
+    { image: 'https://img.icons8.com/?size=200&id=101717&format=png&color=000000', alt: 'Gambar kepala gajah besar', options: ['Gajah', 'Badak', 'Singa', 'Kuda'], correct: 'Gajah' },
+    { image: 'https://img.icons8.com/?size=200&id=IPM25sfz9lod&format=png&color=000000', alt: 'Gambar kepala harimau', options: ['Harimau', 'Singa', 'Macan', 'Kucing'], correct: 'Harimau' },
+    { image: 'https://img.icons8.com/?size=200&id=16035&format=png&color=000000', alt: 'Gambar kepala beruang', options: ['Beruang', 'Singa', 'Harimau', 'Kucing'], correct: 'Beruang' },
+    { image: 'https://img.icons8.com/?size=200&id=16079&format=png&color=000000', alt: 'Gambar mobil mainan merah', options: ['macan', 'babi', 'singa', 'kucing'], correct: 'babi' },
+    { image: 'https://img.icons8.com/?size=200&id=NZ8kvzWb7v6Q&format=png&color=000000', alt: 'Gambar motor kuning', options: ['beruang', 'singa', 'monyet', 'tikus'], correct: 'tikus' },
+    { image: 'https://img.icons8.com/?size=200&id=KTRuA45V_Elk&format=png&color=000000', alt: 'Gambar bus sekolah kuning', options: ['singa', 'kuda', 'monyet', 'sapi'], correct: 'monyet' },
+    { image: 'https://img.icons8.com/?size=200&id=bMylUSWbVIBr&format=png&color=000000', alt: 'Gambar truk besar', options: ['sapi', 'babi', 'kucing', 'harimau'], correct: 'sapi' },
+    { image: 'https://img.icons8.com/?size=200&id=2bZlfmx30dhD&format=png&color=000000', alt: 'Gambar pisang kuning', options: ['monyet', 'ikan', 'lebah', 'sapi'], correct: 'lebah' },
+    { image: 'https://img.icons8.com/?size=200&id=MYzbfCo8DDQe&format=png&color=000000', alt: 'Gambar apel merah', options: ['rusa', 'monyet', 'ikan', 'sapi'], correct: 'rusa' },
+    { image: 'https://img.icons8.com/?size=200&id=NWDdvWhVKCr9&format=png&color=000000', alt: 'Gambar jeruk oranye', options: ['lebah', 'singa', 'semut', 'monyet'], correct: 'semut' }
+    ];
+
+    let questions = [];
+    const imageContainer = document.querySelector('#image-container img');
+    const optionsContainer = document.getElementById('options-container');
+    const scoreboard = document.getElementById('scoreboard');
+    const questionNumberEl = document.getElementById('question-number');
+    const wrongChancesEl = document.getElementById('wrong-chances');
+    const gameOverEl = document.getElementById('game-over');
+    const finalScoreEl = document.getElementById('final-score');
+    const restartBtn = document.getElementById('restart-btn');
+    const menuBtn = document.getElementById('menu-btn');
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let wrongCount = 0;
+    
+    const maxWrong = 3;
+
+    function speakText(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'id-ID';
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    // Fisher-Yates shuffle to randomize questions array
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function updateWrongChances() {
+      wrongChancesEl.textContent = `Kesempatan salah tersisa: ${maxWrong - wrongCount}`;
+    }
+
+    function loadQuestion(index) {
+      wrongChancesEl.style.display = 'block';
+      updateWrongChances();
+
+      const q = questions[index];
+      imageContainer.src = q.image;
+      imageContainer.alt = q.alt;
+      questionNumberEl.textContent = `Soal ${index + 1} dari ${questions.length}`;
+      optionsContainer.innerHTML = '';
+      q.options.forEach(option => {
+        let btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = option;
+        btn.setAttribute('role', 'listitem');
+        btn.setAttribute('aria-label', `Pilihan ${option}`);
+
+        btn.addEventListener('click', () => {
+          speakText(option);
+          disableOptions();
+
+          if (option === q.correct) {
+            btn.classList.add('correct');
+            score += 10;
+            scoreboard.textContent = 'Skor: ' + score;
+            setTimeout(() => {
+              currentQuestionIndex++;
+              if(currentQuestionIndex >= questions.length) {
+                showGameOver();
+              } else {
+                loadQuestion(currentQuestionIndex);
+              }
+            }, 700);
+          } else {
+            btn.classList.add('wrong');
+            wrongCount++;
+            updateWrongChances();
+            setTimeout(() => {
+              if (wrongCount >= maxWrong) {
+                showGameOver();
+              } else {
+                currentQuestionIndex++;
+                if(currentQuestionIndex >= questions.length) {
+                  showGameOver();
+                } else {
+                  loadQuestion(currentQuestionIndex);
+                }
+              }
+            }, 700);
+          }
+        });
+
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    function disableOptions() {
+      const buttons = optionsContainer.querySelectorAll('button');
+      buttons.forEach(btn => btn.disabled = true);
+    }
+
+    function showGameOver() {
+      questionNumberEl.style.display = 'none';
+      wrongChancesEl.style.display = 'none';
+      imageContainer.parentElement.style.display = 'none';
+      optionsContainer.style.display = 'none';
+      scoreboard.style.display = 'none';
+      gameOverEl.style.display = 'block';
+      finalScoreEl.textContent = score;
+      window.speechSynthesis.cancel();
+    }
+
+    function restartGame() {
+      currentQuestionIndex = 0;
+      score = 0;
+      wrongCount = 0;
+      questions = shuffleArray([...originalQuestions]); // shuffle a fresh copy
+      questionNumberEl.style.display = 'block';
+      wrongChancesEl.style.display = 'block';
+      imageContainer.parentElement.style.display = 'flex';
+      optionsContainer.style.display = 'grid';
+      scoreboard.style.display = 'block';
+      gameOverEl.style.display = 'none';
+      scoreboard.textContent = 'Skor: 0';
+      loadQuestion(currentQuestionIndex);
+    }
+
+    restartBtn.addEventListener('click', restartGame);
+
+    menuBtn.addEventListener('click', () => {
+      // Implement your menu navigation logic here, e.g. location.href = 'index.html';
+      alert('Kembali ke menu awal akan diimplementasikan di sini.');
+      location.href = 'menu-tebak.html';
+    });
+
+    // Initialize shuffled questions and load first question on page load
+    questions = shuffleArray([...originalQuestions]);
+    loadQuestion(currentQuestionIndex);
+
+  })();
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Tebak Warna - Game Anak Anak (Game Over Wrong Jawaban & Waktu)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Fredoka One', cursive, Arial, sans-serif;
+    background: linear-gradient(135deg, #ffefba, #ffffff);
+    color: #34495e;
+    max-width: 350px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    margin: 0 auto;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 12px;
+    user-select: none;
+  }
+
+  header h1 {
+    font-size: 2.4rem;
+    color: #d35400;
+    text-shadow: 2px 2px 4px #e67e22;
+    margin: 0;
+  }
+
+  #game-container {
+    background: #fff3e0;
+    border-radius: 20px;
+    box-shadow: 0 6px 15px rgba(230, 126, 34, 0.4);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 15px;
+    flex-grow: 1;
+  }
+
+  #color-display {
+    height: 240px;
+    border-radius: 20px;
+    box-shadow: 0 0 15px #e67e22cc;
+    margin-bottom: 20px;
+    user-select: none;
+    border: 5px solid #d35400;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 2px 2px #c0392b;
+  }
+
+  #options-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  button.option-btn {
+    background: #f39c12;
+    border: none;
+    border-radius: 18px;
+    padding: 14px 10px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #fff;
+    box-shadow: 0 5px #e67e22;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s ease;
+  }
+
+  button.option-btn:hover,
+  button.option-btn:focus {
+    background-color: #d35400;
+    outline: none;
+  }
+
+  button.option-btn.correct {
+    background-color: #27ae60;
+    box-shadow: 0 5px #1e8449;
+    pointer-events: none;
+  }
+
+  button.option-btn.wrong {
+    background-color: #c0392b;
+    box-shadow: 0 5px #922b21;
+    pointer-events: none;
+  }
+
+  #scoreboard {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #d35400;
+    user-select: none;
+  }
+
+  #question-number {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #d35400;
+    user-select: none;
+  }
+
+  #timer {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #c0392b;
+    margin-bottom: 12px;
+    user-select: none;
+  }
+
+  #game-over {
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #d35400;
+    user-select: none;
+    padding: 20px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #buttons-gameover {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  button#restart-btn, button#menu-btn {
+    background-color: #f39c12;
+    border: none;
+    border-radius: 22px;
+    padding: 14px 0;
+    width: 120px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+    box-shadow: 0 5px #d35400;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s ease;
+  }
+
+  button#restart-btn:hover,
+  button#restart-btn:focus,
+  button#menu-btn:hover,
+  button#menu-btn:focus {
+    background-color: #d35400;
+    outline: none;
+  }
+
+  footer {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    margin-top: 10px;
+    user-select: none;
+  }
+
+  @media (max-height: 600px) {
+    #color-display {
+      height: 180px;
+      font-size: 1.3rem;
+    }
+
+    button.option-btn {
+      padding: 12px 10px;
+      font-size: 1rem;
+    }
+
+    #question-number {
+      font-size: 1rem;
+    }
+
+    #timer {
+      font-size: 1rem;
+    }
+
+    #buttons-gameover {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    button#restart-btn, button#menu-btn {
+      width: 100%;
+      font-size: 1.1rem;
+      padding: 12px 0;
+    }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Tebak Warna</h1>
+  <p>Warna apa ini? Pilih jawaban yang tepat!</p>
+</header>
+
+<div id="game-container" role="main" aria-label="Tebak warna game">
+  <div id="question-number" aria-live="polite"></div>
+  <div id="timer" aria-live="polite" aria-atomic="true">Waktu: 15 detik</div>
+  <div id="color-display" aria-live="polite" aria-atomic="true" aria-label="Kotak warna">
+    <!-- Color box with text prompt -->
+  </div>
+  <div id="options-container" role="list" aria-label="Pilihan warna"></div>
+  <div id="scoreboard" aria-live="polite" aria-atomic="true">
+    Skor: 0
+  </div>
+  <div id="game-over" style="display:none;">
+    Permainan selesai!<br />
+    Skor akhir kamu adalah: <span id="final-score"></span>
+    <div id="buttons-gameover">
+      <button id="restart-btn" aria-label="Mulai ulang permainan">Main lagi</button>
+      <button id="menu-btn" aria-label="Kembali ke menu awal">Menu Awal</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  &copy; 2024 Tebak Warna Anak
+</footer>
+
+<script>
+  (function(){
+    // Colors and their Indonesian names
+    const colors = [
+      {name:'Merah', hex:'#e74c3c'},
+      {name:'Kuning', hex:'#f1c40f'},
+      {name:'Biru', hex:'#2980b9'},
+      {name:'Hijau', hex:'#27ae60'},
+      {name:'Ungu', hex:'#8e44ad'},
+      {name:'Jingga', hex:'#e67e22'},
+      {name:'Hitam', hex:'#2c3e50'},
+      {name:'Putih', hex:'#ecf0f1'}
+    ];
+
+    const colorDisplay = document.getElementById('color-display');
+    const optionsContainer = document.getElementById('options-container');
+    const scoreboard = document.getElementById('scoreboard');
+    const questionNumberEl = document.getElementById('question-number');
+    const timerEl = document.getElementById('timer');
+    const gameOverEl = document.getElementById('game-over');
+    const finalScoreEl = document.getElementById('final-score');
+    const restartBtn = document.getElementById('restart-btn');
+    const menuBtn = document.getElementById('menu-btn');
+
+    let score = 0;
+    let correctColor;
+    let currentQuestionIndex = 0;
+    let timer;
+    let timeLeft = 15; // seconds for each question
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i +1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function pickColor() {
+      // Pick a random color as the correct answer
+      return colors[Math.floor(Math.random()*colors.length)];
+    }
+
+    function setupGame() {
+      score = 0;
+      currentQuestionIndex = 0;
+      gameOverEl.style.display = 'none';
+      scoreboard.style.display = 'block';
+      questionNumberEl.style.display = 'block';
+      optionsContainer.style.display = 'grid';
+      timerEl.style.display = 'block';
+      updateScore();
+      loadQuestion();
+    }
+
+    function updateScore() {
+      scoreboard.textContent = 'Skor: ' + score;
+    }
+
+    function loadQuestion() {
+      clearInterval(timer);
+      timeLeft = 15;
+      timerEl.textContent = 'Waktu: ' + timeLeft + ' detik';
+
+      timer = setInterval(() => {
+        timeLeft--;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          showGameOver();
+        } else {
+          timerEl.textContent = 'Waktu: ' + timeLeft + ' detik';
+        }
+      }, 1000);
+
+      questionNumberEl.textContent = `Soal ${currentQuestionIndex + 1}`;
+      optionsContainer.innerHTML = '';
+
+      // Pick correct color
+      correctColor = pickColor();
+
+      // Show the color in the box
+      colorDisplay.style.backgroundColor = correctColor.hex;
+      colorDisplay.textContent = 'Warna ini?';
+
+      // Prepare options array including correct one and 3 others random
+      let options = [correctColor];
+      while (options.length < 4) {
+        let c = colors[Math.floor(Math.random()*colors.length)];
+        if (!options.find(o => o.name === c.name)) {
+          options.push(c);
+        }
+      }
+
+      shuffle(options);
+
+      options.forEach(option => {
+        let btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = option.name;
+        btn.setAttribute('role','listitem');
+        btn.setAttribute('aria-label', `Pilihan warna ${option.name}`);
+
+        btn.addEventListener('click', () => {
+          // Speak option text
+          speakText(option.name);
+
+          disableOptions();
+          clearInterval(timer);
+
+          if (option.name === correctColor.name) {
+            btn.classList.add('correct');
+            score += 10;
+            updateScore();
+            setTimeout(() => {
+              currentQuestionIndex++;
+              loadQuestion();
+            }, 700);
+          } else {
+            btn.classList.add('wrong');
+            setTimeout(() => {
+              showGameOver();
+            }, 700);
+          }
+        });
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    function disableOptions() {
+      Array.from(optionsContainer.children).forEach(b => b.disabled = true);
+    }
+
+    function speakText(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'id-ID';
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function showGameOver() {
+      questionNumberEl.style.display = 'none';
+      optionsContainer.style.display = 'none';
+      scoreboard.style.display = 'none';
+      timerEl.style.display = 'none';
+      gameOverEl.style.display = 'flex';
+      finalScoreEl.textContent = score;
+      window.speechSynthesis.cancel();
+    }
+
+    restartBtn.addEventListener('click', () => {
+      setupGame();
+    });
+
+    menuBtn.addEventListener('click', () => {
+      alert('KAMU AKAN KEMBALI KE MENU AWAL');
+      location.href = 'menu-tebak.html';
+    });
+
+    // Initialize game on page load
+    setupGame();
+
+  })();
+</script>
+</body>
+</html>
+
